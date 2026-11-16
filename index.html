@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Husky &amp; Munchkin Deep Talk</title>
+<style>
+/* Layout idea: one phone-width column for a couple on a call. A single big card is the stage,
+   and the whole page re-colors itself to the mood of the deck in play (tokens set from JS).
+   Everything is local: fonts in ./fonts, cards in ./questions.js, no network needed. */
+@font-face{font-family:"Mali";font-weight:400;font-display:swap;src:url(fonts/mali-thai-400-normal.woff2) format("woff2");unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC}
+@font-face{font-family:"Mali";font-weight:600;font-display:swap;src:url(fonts/mali-thai-600-normal.woff2) format("woff2");unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC}
+@font-face{font-family:"Mali";font-weight:700;font-display:swap;src:url(fonts/mali-thai-700-normal.woff2) format("woff2");unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC}
+@font-face{font-family:"Mali";font-weight:400;font-display:swap;src:url(fonts/mali-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Mali";font-weight:600;font-display:swap;src:url(fonts/mali-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Mali";font-weight:700;font-display:swap;src:url(fonts/mali-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+:root{
+  --bg:#fbe8f1; --card:#ffffff; --ink:#40243a; --accent:#d9478f; --on:#ffffff; --soft:#f6c9de;
+  --muted:color-mix(in srgb, var(--ink) 62%, var(--bg));
+  --f-main:"Mali","Leelawadee UI","Thonburi","Hiragino Maru Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  --f-ja:"Hiragino Maru Gothic ProN","Yu Gothic UI","Yu Gothic","Meiryo","Noto Sans JP","Noto Sans CJK JP",sans-serif;
+  --paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .22 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper) var(--bg);color:var(--ink);font-family:var(--f-main);font-size:16px;line-height:1.5;
+  transition:background-color .5s,color .5s;-webkit-text-size-adjust:100%}
+.wrap{max-width:480px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+header{position:relative;display:flex;flex-direction:column;gap:2px;text-align:center}
+.deco{position:absolute;pointer-events:none;overflow:visible}
+.hdeco,.pagedeco{position:absolute;inset:0;pointer-events:none}
+.pagedeco{position:fixed;z-index:0;opacity:.75}
+.wrap{position:relative;z-index:1}
+.hdeco .deco{margin-left:-6px}
+.cdeco{position:absolute;right:14px;bottom:10px;width:58px;height:30px;pointer-events:none}
+.cdeco .deco{width:16px;height:16px}
+.cdeco .deco:nth-child(1){right:0;bottom:4px;transform:rotate(12deg)}
+.cdeco .deco:nth-child(2){right:22px;bottom:16px;width:11px;height:11px}
+.cdeco .deco:nth-child(3){right:36px;bottom:0;width:12px;height:12px;transform:rotate(-14deg)}
+.deck i{border-radius:52% 48% 55% 45% / 47% 55% 45% 53%!important;border:0!important;opacity:.9}
+.far{display:flex;align-items:center;gap:4px}
+.far .pet{width:66px;height:66px;flex:none;position:relative;z-index:1}
+.far .path{flex:1;height:44px;min-width:0}
+.far .path path{stroke:var(--accent)}
+.far .path .heart{fill:var(--accent)}
+h1{font-size:1.3rem;line-height:1.2;margin:0;font-weight:700;text-wrap:balance}
+header p{margin:0;font-size:.78rem;color:var(--muted)}
+
+.clock{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:.8rem;background:var(--soft);
+  border-radius:14px;padding:6px 10px;transition:background-color .5s;font-variant-numeric:tabular-nums}
+.clock b{font-size:.95rem}
+.clock select{border:0;background:var(--card);border-radius:8px;padding:2px 4px;font-size:.75rem;max-width:120px}
+
+.seg{display:flex;background:var(--soft);border-radius:999px;padding:4px;gap:4px;transition:background-color .5s}
+.seg button{flex:1;border:0;background:transparent;border-radius:999px;padding:6px 4px;font-weight:600;font-size:.82rem}
+.seg button[aria-pressed="true"]{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.seg-label{font-size:.75rem;color:var(--muted);margin:0 0 4px 8px}
+.two{display:grid;grid-template-columns:1fr;gap:10px}
+
+.decks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.deck{border:2px solid transparent;background:var(--card);border-radius:14px;padding:8px 10px;text-align:left;
+  display:flex;align-items:center;gap:8px;min-height:52px;transition:background-color .5s}
+.deck i{width:14px;height:14px;border-radius:50%;flex:none;border:2px solid rgba(0,0,0,.12)}
+.deck b{display:block;font-size:.9rem;line-height:1.2}
+.deck small{display:block;font-size:.68rem;color:var(--muted);line-height:1.2}
+.deck[aria-pressed="true"]{border-color:var(--accent)}
+.deck.all{grid-column:1/-1;justify-content:center;text-align:center}
+
+.card{position:relative;background:var(--paper) var(--card);border-radius:24px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.14);
+  display:flex;flex-direction:column;gap:12px;min-height:320px;transition:background-color .5s}
+.card.flip{animation:flip .45s ease}
+@keyframes flip{0%{transform:rotateY(80deg) scale(.96);opacity:.2}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.card.flip{animation:none}body,.card,.deck,.seg,.clock,details{transition:none}}
+.top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{background:var(--accent);color:var(--on);border-radius:999px;padding:3px 10px;font-size:.75rem;font-weight:700}
+.lv{display:flex;align-items:center;gap:3px;font-size:.72rem;color:var(--muted);font-weight:600}
+.lv i{width:9px;height:9px;border-radius:50%;border:2px solid var(--accent)}
+.lv i.on{background:var(--accent)}
+.num{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.q{display:flex;flex-direction:column;gap:10px;flex:1;justify-content:center}
+.q p{margin:0;overflow-wrap:anywhere}
+.q .lab{display:block;font-size:.62rem;letter-spacing:.08em;color:var(--muted);font-weight:700;font-family:var(--f-main)}
+.q .th{order:2}.q .en{order:3}.q .ja{order:1}
+.q .ja .txt{font-family:var(--f-ja);line-height:2.3}
+.q .txt{display:block;font-size:.98rem}
+.q .main .txt{font-size:1.3rem;font-weight:700;line-height:1.45}
+.q .ja.main .txt{line-height:2.2}
+.q .main{order:0!important;padding-bottom:10px;border-bottom:2px dashed var(--soft)}
+.q p:only-child.main{border-bottom:0}
+rt{font-size:.5em;font-weight:500;color:var(--muted)}
+.say{align-self:flex-start;border:0;background:var(--soft);border-radius:999px;padding:5px 12px;font-size:.8rem;font-weight:600}
+.note{font-size:.75rem;color:var(--muted);margin:0}
+
+.rate{display:flex;flex-direction:column;gap:6px;border-top:2px dashed var(--soft);padding-top:10px}
+.rate .row{display:flex;align-items:center;gap:6px}
+.rate .pet{width:26px;height:26px;flex:none}
+.rate .nums{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;flex:1}
+.rate button{border:0;background:var(--soft);border-radius:8px;padding:5px 0;font-size:.78rem;font-weight:700;font-variant-numeric:tabular-nums}
+.rate button[aria-pressed="true"]{background:var(--accent);color:var(--on)}
+
+.gate{display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center;text-align:center}
+.gate p{margin:0}
+.row2{display:flex;gap:8px}
+.btn{flex:1;border:0;border-radius:16px;padding:14px 12px;font-weight:700;font-size:1.05rem;background:var(--accent);color:var(--on)}
+.btn.ghost{background:var(--soft);color:var(--ink);flex:0 0 auto;font-size:.9rem}
+.btn.small{padding:8px 12px;font-size:.85rem;border-radius:12px;flex:0 0 auto}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5;cursor:default}
+.left{font-size:.78rem;color:var(--muted);text-align:center;margin:0;font-variant-numeric:tabular-nums}
+.jump{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.8rem;color:var(--muted);flex-wrap:wrap}
+.jump input{width:72px;border:2px solid var(--soft);background:var(--card);border-radius:10px;padding:5px 8px;text-align:center}
+
+details{background:var(--card);border-radius:16px;padding:10px 14px;transition:background-color .5s}
+summary{font-weight:700;cursor:pointer}
+details ol,details ul{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.88rem}
+.del{border:0;background:none;color:var(--muted);text-decoration:underline;font-size:.75rem;padding:0;margin-left:6px}
+details p{font-size:.85rem;color:var(--muted);margin:8px 0 0}
+.form{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.form label{font-size:.75rem;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.form input,.form select,.form textarea{border:2px solid var(--soft);background:var(--bg);border-radius:10px;padding:7px 9px;width:100%}
+.form textarea{min-height:64px;font-size:.75rem;word-break:break-all}
+.form .pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+h2{font-size:.9rem;margin:14px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="far">
+      <span class="pet" id="hdrH"></span>
+      <svg class="path" viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true"><path d="M4 34 Q100 -14 196 34" fill="none" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
+      <span class="pet" id="hdrC"></span>
+    </div>
+    <h1>คุยลึก ๆ ข้ามระยะทาง</h1>
+    <p>Deep Talk Cards for long-distance couples · 遠距離ディープトーク</p>
+  </header>
+
+  <div class="clock" aria-label="เวลาของสองฝั่ง">
+    <span>ที่นี่ <b id="tHere">--:--</b></span>
+    <span aria-hidden="true">·</span>
+    <span>ที่โน่น <b id="tThere">--:--</b></span>
+    <select id="off" aria-label="เขตเวลาของอีกฝั่ง"></select>
+  </div>
+
+  <div class="two">
+    <div>
+      <p class="seg-label">ภาษาหลักบนการ์ด</p>
+      <div class="seg" id="lang">
+        <button type="button" data-l="th">ไทย</button>
+        <button type="button" data-l="en">English</button>
+        <button type="button" data-l="ja">日本語</button>
+      </div>
+    </div>
+    <div>
+      <p class="seg-label">ความลึกของคำถาม</p>
+      <div class="seg" id="depth">
+        <button type="button" data-d="auto">เบาไปลึก</button>
+        <button type="button" data-d="1">1 เบา ๆ</button>
+        <button type="button" data-d="2">2 กลาง</button>
+        <button type="button" data-d="3">3 ลึก</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="decks" id="decks"></div>
+
+  <section class="card" id="card" aria-live="polite"></section>
+
+  <div class="row2">
+    <button type="button" class="btn ghost" id="fav">เก็บใบนี้</button>
+    <button type="button" class="btn" id="draw">จั่วการ์ดใบต่อไป</button>
+  </div>
+  <p class="left" id="left"></p>
+  <form class="jump" id="jump" novalidate>
+    <label for="jumpN">คอลกันอยู่? บอกเลขการ์ดให้แฟน แล้วพิมพ์เลขเดียวกัน</label>
+    <input id="jumpN" type="number" inputmode="numeric" min="1" placeholder="เลข">
+    <button type="submit" class="btn small ghost">เปิดใบนี้</button>
+  </form>
+
+  <details id="favBox">
+    <summary>การ์ดที่เก็บไว้ (<span id="favN">0</span>)</summary>
+    <div id="favList"></div>
+  </details>
+
+  <details id="mineBox">
+    <summary>เขียนการ์ดเอง (<span id="mineN">0</span>)</summary>
+    <form class="form" id="mineForm">
+      <div class="pair">
+        <label>หมวด<select id="mCat"></select></label>
+        <label>ความลึก<select id="mLv"><option value="1">1 เบา ๆ</option><option value="2">2 กลาง</option><option value="3">3 ลึก</option></select></label>
+      </div>
+      <label>คำถามภาษาไทย<input id="mTh" maxlength="200" autocomplete="off"></label>
+      <label>English (ไม่ใส่ก็ได้)<input id="mEn" maxlength="200" autocomplete="off"></label>
+      <label>日本語 (ไม่ใส่ก็ได้) ใส่คำอ่านแบบ {漢字|かんじ}<input id="mJa" maxlength="300" autocomplete="off"></label>
+      <button type="submit" class="btn small">เพิ่มการ์ดใบนี้</button>
+      <p class="note" id="mineMsg">ใส่อย่างน้อย 1 ภาษา การ์ดจะไปอยู่ในกองของหมวดที่เลือก</p>
+    </form>
+    <div id="mineList"></div>
+    <h2>ส่งการ์ดที่เขียนให้แฟน</h2>
+    <div class="form">
+      <textarea id="code" readonly aria-label="โค้ดการ์ดของฉัน"></textarea>
+      <button type="button" class="btn small ghost" id="copy">คัดลอกโค้ด</button>
+    </div>
+    <h2>รับการ์ดจากแฟน</h2>
+    <form class="form" id="impForm">
+      <textarea id="imp" aria-label="วางโค้ดจากแฟน" placeholder="วางโค้ดที่แฟนส่งมาตรงนี้"></textarea>
+      <button type="submit" class="btn small ghost">เพิ่มการ์ดจากโค้ด</button>
+      <p class="note" id="impMsg"></p>
+    </form>
+  </details>
+
+  <details>
+    <summary>วิธีเล่นตอนอยู่ไกลกัน</summary>
+    <ul>
+      <li>เปิดเกมนี้ทั้งสองเครื่องระหว่างคอล หรือให้คนหนึ่งแชร์หน้าจอ</li>
+      <li>คนจั่วบอกเลขมุมขวาบนของการ์ด อีกคนพิมพ์เลขเดียวกันในช่อง "เปิดใบนี้"</li>
+      <li>ตอบทีละคน คนฟังยังไม่ต้องแก้ตัวหรืออธิบาย ฟังให้จบก่อน</li>
+      <li>โหมด "เบาไปลึก" จะเริ่มจากระดับ 1 แล้วค่อยไประดับ 3 ในแต่ละกอง</li>
+      <li>ข้ามได้เสมอ ไม่ต้องให้เหตุผล</li>
+      <li>หมวดชวนทะเลาะ: ใครขึ้นเสียงก่อน ต้องสั่งขนมไปส่งให้อีกฝ่าย</li>
+      <li>เน็ตหลุดก็เล่นต่อได้ เกมนี้ไม่ใช้อินเทอร์เน็ต</li>
+    </ul>
+  </details>
+</div>
+
+<script src="art.js"></script>
+<script src="questions.js"></script>
+<script>
+
+const CATS = [
+  {id:"view",  th:"มุมมอง & ทัศนคติ", en:"Views & Values", t:{bg:"#e3ecfc",card:"#ffffff",ink:"#1f2a52",accent:"#3d5bd9",on:"#ffffff",soft:"#cfdcfa"}},
+  {id:"rate",  th:"ให้คะแนน 1–10", en:"Rate it", t:{bg:"#fff0c2",card:"#fffdf5",ink:"#4a3200",accent:"#f0a000",on:"#3a2600",soft:"#ffe08a"}},
+  {id:"tears", th:"เรียกน้ำตา", en:"Tearjerker", dark:true, t:{bg:"#1b2440",card:"#2a3759",ink:"#e8eeff",accent:"#8fb4ff",on:"#10203f",soft:"#3a4b75"}},
+  {id:"fight", th:"ชวนทะเลาะ", en:"Fight Starter", t:{bg:"#ffdfd9",card:"#fff8f6",ink:"#5a1410",accent:"#e23b2e",on:"#ffffff",soft:"#ffc2b8"}},
+  {id:"decode",th:"ถอดรหัสใจ", en:"Decode Me", t:{bg:"#eddffb",card:"#fffaff",ink:"#3a1d5c",accent:"#8a45d6",on:"#ffffff",soft:"#dcc4f6"}},
+  {id:"memory",th:"ความทรงจำของเรา", en:"Our Story", t:{bg:"#fde6d6",card:"#fffaf5",ink:"#5b3220",accent:"#d9703a",on:"#ffffff",soft:"#f9d0b5"}},
+  {id:"future",th:"อนาคต", en:"Future", t:{bg:"#d6f2ec",card:"#f8fffd",ink:"#0f3f3a",accent:"#14917f",on:"#ffffff",soft:"#b4e5db"}},
+  {id:"silly", th:"บ้า ๆ บอ ๆ", en:"What If", t:{bg:"#e3f6c2",card:"#fcfff2",ink:"#2e4208",accent:"#6b9a0c",on:"#ffffff",soft:"#cdea96"}},
+  {id:"dark",  th:"After Dark 18+", en:"After Dark", dark:true, t:{bg:"#24112a",card:"#3a1c42",ink:"#ffe9f6",accent:"#ff6fb1",on:"#3a0a22",soft:"#562c61"}}
+];
+const ALL_ACCENT = "#d9478f";
+const LV_NAME = {1:"เบา ๆ", 2:"กลาง", 3:"ลึก"};
+const Q = Array.isArray(window.DT_Q) ? window.DT_Q : [];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ruby = s => esc(s).replace(/\{([^|{}]+)\|([^{}]+)\}/g, "<ruby>$1<rt>$2</rt></ruby>");
+const plainJa = s => s.replace(/\{([^|{}]+)\|[^{}]+\}/g, "$1");
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const validCat = c => CATS.some(x => x.id === c);
+function cleanMine(list){
+  if(!Array.isArray(list)) return [];
+  return list.filter(m => m && typeof m.id === "string" && /^c[\w-]{1,40}$/.test(m.id) && validCat(m.c) && [1,2,3].includes(m.lv)
+    && ["th","en","ja"].every(k => typeof m[k] === "string" && m[k].length <= 300) && (m.th || m.en || m.ja)).slice(0, 300);
+}
+
+let lang = store.get("dt2_lang", "th");
+let depth = store.get("dt2_depth", "auto");
+let deck = "all";
+let adultOk = false;
+let cur = null;
+let mine = cleanMine(store.get("dt2_mine", []));
+let favs = store.get("dt2_favs", []);
+let piles = {};
+
+/* A card id is a number (index into Q) or a string (a card you wrote). */
+function item(id){
+  if(typeof id === "number"){ const r = Q[id]; return r ? {c:r[0], lv:r[1], th:r[2], en:r[3], ja:r[4], no:id + 1} : null; }
+  const m = mine.find(x => x.id === id); return m ? Object.assign({own:true}, m) : null;
+}
+function allIds(){ return Q.map((_, i) => i).concat(mine.map(m => m.id)); }
+function shuffle(a){ for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function pool(d){
+  return allIds().filter(id => { const it = item(id);
+    if(d === "all" ? (!adultOk && it.c === "dark") : it.c !== d) return false;
+    return depth === "auto" || it.lv === +depth; });
+}
+function pile(d){
+  const key = d + "|" + depth;
+  if(!piles[key] || !piles[key].length){
+    const ids = pool(d);
+    /* draw() pops from the end, so in "light to deep" mode level 1 goes last in the array */
+    piles[key] = depth === "auto" ? [3,2,1].flatMap(l => shuffle(ids.filter(id => item(id).lv === l))) : shuffle(ids);
+  }
+  return piles[key];
+}
+function theme(t){ const r = document.documentElement.style; for(const k in t) r.setProperty("--" + k, t[k]); r.setProperty("color-scheme", t.bg[1] < "4" ? "dark" : "light"); }
+function catOf(id){ return CATS.find(c => c.id === id); }
+
+function renderDecks(){
+  const el = $("decks"); el.innerHTML = "";
+  const mk = (id, th, en, color, cls) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "deck" + (cls ? " " + cls : "");
+    b.setAttribute("aria-pressed", String(deck === id));
+    b.innerHTML = `<i style="background:${color}"></i><span><b>${esc(th)}</b><small>${esc(en)}</small></span>`;
+    b.onclick = () => { deck = id; renderDecks(); draw(); };
+    el.appendChild(b);
+  };
+  mk("all", "สุ่มทุกหมวด", "Shuffle every deck", ALL_ACCENT, "all");
+  CATS.forEach(c => mk(c.id, c.th, c.en, c.t.accent));
+}
+function renderSegs(){
+  document.querySelectorAll("#lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
+  document.querySelectorAll("#depth button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.d === depth)));
+  const ps = [...document.querySelectorAll(".q p")];
+  const main = ps.find(p => p.dataset.l === lang) || ps[0];
+  ps.forEach(p => p.classList.toggle("main", p === main));
+}
+
+function show(id){
+  const it = item(id); if(!it) return false;
+  const card = $("card"); cur = id;
+  const c = catOf(it.c); theme(c.t);
+  const dots = [1,2,3].map(n => `<i class="${n <= it.lv ? "on" : ""}"></i>`).join("");
+  let html = `<div class="top"><span class="tag">${esc(c.th)}</span><span class="lv" title="ความลึกระดับ ${it.lv}">${dots}<span>${LV_NAME[it.lv]}</span></span><span class="num">${it.own ? "การ์ดของเรา" : "#" + String(it.no).padStart(3, "0")}</span></div><div class="q">`;
+  if(it.ja) html += `<p class="ja" data-l="ja" lang="ja"><span class="lab">日本語</span><span class="txt">${ruby(it.ja)}</span></p>`;
+  if(it.th) html += `<p class="th" data-l="th" lang="th"><span class="lab">ไทย</span><span class="txt">${esc(it.th)}</span></p>`;
+  if(it.en) html += `<p class="en" data-l="en" lang="en"><span class="lab">ENGLISH</span><span class="txt">${esc(it.en)}</span></p>`;
+  html += `</div>`;
+  if(it.ja) html += `<button type="button" class="say" id="say">ฟังเสียงภาษาญี่ปุ่น</button><p class="note" id="sayMsg" hidden></p>`;
+  if(it.c === "rate"){
+    const nums = w => Array.from({length:10}, (_, i) => `<button type="button" data-w="${w}" aria-pressed="false" aria-label="${w === "h" ? "ฮัสกี้" : "แมว"}ให้ ${i + 1}">${i + 1}</button>`).join("");
+    html += `<div class="rate"><div class="row"><span class="pet">${HUSKY}</span><div class="nums">${nums("h")}</div></div><div class="row"><span class="pet">${CAT}</span><div class="nums">${nums("c")}</div></div></div>`;
+  }
+  if(it.c !== "rate") html += CARD_DECO();
+  card.innerHTML = html;
+  card.querySelectorAll(".rate button").forEach(b => b.onclick = () => {
+    card.querySelectorAll(`.rate button[data-w="${b.dataset.w}"]`).forEach(x => x.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+  });
+  if(it.ja) $("say").onclick = () => speak(plainJa(it.ja));
+  stopSpeak();
+  card.classList.remove("flip"); void card.offsetWidth; card.classList.add("flip");
+  renderSegs(); updateFavBtn();
+  return true;
+}
+
+function message(html){ cur = null; $("card").innerHTML = `<div class="gate">${html}</div>`; updateFavBtn(); stopSpeak(); }
+
+function draw(){
+  if(deck === "dark" && !adultOk){
+    theme(catOf("dark").t);
+    message(`<p><b>After Dark เป็นหมวดสำหรับผู้ใหญ่ 18+</b></p><p>คำถามเรื่องความใกล้ชิดของเราสองคน ทั้งคู่โอเคที่จะเปิดหมวดนี้ไหม</p><div class="row2"><button type="button" class="btn ghost" id="no">ยังก่อน</button><button type="button" class="btn" id="yes">โอเคทั้งคู่ เปิดเลย</button></div>`);
+    $("yes").onclick = () => { adultOk = true; piles = {}; draw(); };
+    $("no").onclick = () => { deck = "all"; renderDecks(); draw(); };
+    $("left").textContent = ""; return;
+  }
+  const total = pool(deck).length;
+  if(!total){
+    if(deck !== "all") theme(catOf(deck).t);
+    message(`<p><b>กองนี้ไม่มีการ์ดระดับ ${esc(depth)}</b></p><p>ลองเปลี่ยนความลึกเป็น "เบาไปลึก" หรือเลือกหมวดอื่น</p>`);
+    $("left").textContent = ""; return;
+  }
+  const p = pile(deck);
+  show(p.pop());
+  $("left").textContent = p.length ? `เหลืออีก ${p.length} จาก ${total} ใบในกองนี้` : `ใบสุดท้ายของกองนี้แล้ว จั่วอีกครั้งจะสับกองใหม่ (${total} ใบ)`;
+}
+
+/* Japanese audio: uses the voice installed on this device, so it works offline. */
+function stopSpeak(){ try{ window.speechSynthesis && speechSynthesis.cancel(); }catch(e){} }
+function speak(text){
+  const msg = $("sayMsg");
+  const say = t => { if(msg){ msg.hidden = false; msg.textContent = t; } };
+  if(!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined"){ say("เบราว์เซอร์นี้ยังไม่รองรับการอ่านออกเสียง ลองเปิดด้วย Chrome, Edge หรือ Safari"); return; }
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ja-JP"; u.rate = 0.85;
+    const v = speechSynthesis.getVoices().find(v => /^ja(-|_|$)/i.test(v.lang));
+    if(v) u.voice = v;
+    else say("ถ้าไม่มีเสียง แปลว่าเครื่องนี้ยังไม่มีเสียงภาษาญี่ปุ่น เพิ่มได้ในการตั้งค่าภาษา/เสียงพูดของเครื่อง");
+    u.onerror = () => say("อ่านออกเสียงไม่สำเร็จ ลองกดอีกครั้ง หรือเช็กเสียงภาษาญี่ปุ่นในการตั้งค่าเครื่อง");
+    speechSynthesis.speak(u);
+  }catch(e){ say("อ่านออกเสียงไม่สำเร็จในเบราว์เซอร์นี้"); }
+}
+try{ window.speechSynthesis && speechSynthesis.getVoices(); }catch(e){}
+
+function updateFavBtn(){
+  const b = $("fav"); b.disabled = cur === null;
+  b.textContent = cur !== null && favs.includes(cur) ? "เก็บแล้ว ✓" : "เก็บใบนี้";
+}
+function label(it){ return it.th || it.en || plainJa(it.ja); }
+function renderFavs(){
+  favs = favs.filter(id => item(id));
+  $("favN").textContent = favs.length;
+  const box = $("favList");
+  if(!favs.length){ box.innerHTML = `<p>ยังไม่มีการ์ดที่เก็บไว้ กด "เก็บใบนี้" ตอนเจอคำถามที่อยากกลับมาคุยอีก</p>`; return; }
+  box.innerHTML = "<ol>" + favs.map((id, k) => { const it = item(id); return `<li>${it.no ? "#" + it.no + " " : ""}${esc(label(it))}<button type="button" class="del" data-k="${k}">เอาออก</button></li>`; }).join("") + "</ol>";
+  box.querySelectorAll("button").forEach(b => b.onclick = () => { favs.splice(+b.dataset.k, 1); store.set("dt2_favs", favs); renderFavs(); updateFavBtn(); });
+}
+
+/* Cards you write yourselves, and a text code to send them to your partner. */
+function encode(list){ return "DT1:" + btoa(unescape(encodeURIComponent(JSON.stringify(list)))); }
+function decode(code){ const m = /DT1:([A-Za-z0-9+/=]+)/.exec(code.replace(/\s+/g, "")); if(!m) return null; try{ return cleanMine(JSON.parse(decodeURIComponent(escape(atob(m[1]))))); }catch(e){ return null; } }
+function saveMine(){ store.set("dt2_mine", mine); piles = {}; renderMine(); renderFavs(); }
+function renderMine(){
+  $("mineN").textContent = mine.length;
+  $("code").value = mine.length ? encode(mine) : "";
+  $("copy").disabled = !mine.length;
+  const box = $("mineList");
+  box.innerHTML = mine.length ? "<ol>" + mine.map((m, k) => `<li>[${esc(catOf(m.c).th)} · ระดับ ${m.lv}] ${esc(label(m))}<button type="button" class="del" data-k="${k}">ลบ</button></li>`).join("") + "</ol>" : "";
+  box.querySelectorAll("button").forEach(b => b.onclick = () => { const gone = mine.splice(+b.dataset.k, 1)[0]; if(cur === gone.id) draw(); saveMine(); });
+}
+$("mCat").innerHTML = CATS.map(c => `<option value="${c.id}">${esc(c.th)}</option>`).join("");
+$("mineForm").onsubmit = e => {
+  e.preventDefault();
+  const m = {id:"c" + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36), c:$("mCat").value, lv:+$("mLv").value,
+    th:$("mTh").value.trim(), en:$("mEn").value.trim(), ja:$("mJa").value.trim()};
+  if(!m.th && !m.en && !m.ja){ $("mineMsg").textContent = "ยังไม่ได้พิมพ์คำถาม ใส่อย่างน้อย 1 ภาษา"; return; }
+  mine.push(m); saveMine();
+  ["mTh","mEn","mJa"].forEach(i => $(i).value = "");
+  $("mineMsg").textContent = `เพิ่มแล้ว อยู่ในกอง "${catOf(m.c).th}"`;
+  deck = m.c; renderDecks(); if(m.c !== "dark" || adultOk) show(m.id); else draw();
+};
+$("copy").onclick = () => {
+  const done = ok => { $("copy").textContent = ok ? "คัดลอกแล้ว ✓ ส่งให้แฟนทางแชตได้เลย" : "คัดลอกไม่ได้ กดค้างที่โค้ดแล้วเลือกคัดลอก"; };
+  const fallback = () => { const t = $("code"); t.focus(); t.select(); let ok = false; try{ ok = document.execCommand("copy"); }catch(e){} done(ok); };
+  try{ navigator.clipboard.writeText($("code").value).then(() => done(true), fallback); }catch(e){ fallback(); }
+};
+$("impForm").onsubmit = e => {
+  e.preventDefault();
+  const list = decode($("imp").value);
+  if(!list){ $("impMsg").textContent = "อ่านโค้ดไม่ได้ ให้แฟนกดคัดลอกโค้ดใหม่ แล้ววางทั้งก้อนที่ขึ้นต้นด้วย DT1:"; return; }
+  const fresh = list.filter(m => !mine.some(x => x.id === m.id));
+  mine = mine.concat(fresh).slice(0, 300); saveMine(); $("imp").value = "";
+  $("impMsg").textContent = fresh.length ? `เพิ่มการ์ดจากแฟนแล้ว ${fresh.length} ใบ` : "การ์ดในโค้ดนี้มีอยู่ในเครื่องครบแล้ว";
+};
+
+/* Two clocks: this device, and the partner's time zone. */
+(function(){
+  const offs = [-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,3.5,4,4.5,5,5.5,6,6.5,7,8,9,9.5,10,11,12,13,14];
+  const local = -new Date().getTimezoneOffset() / 60;
+  let off = store.get("dt2_off", local); if(!offs.includes(off)) off = offs.includes(local) ? local : 0;
+  const name = o => "UTC" + (o < 0 ? "−" : "+") + Math.floor(Math.abs(o)) + (o % 1 ? ":30" : "");
+  $("off").innerHTML = offs.map(o => `<option value="${o}"${o === off ? " selected" : ""}>${name(o)}</option>`).join("");
+  const two = n => String(n).padStart(2, "0");
+  function tick(){
+    const now = new Date();
+    $("tHere").textContent = two(now.getHours()) + ":" + two(now.getMinutes());
+    const t = new Date(now.getTime() + off * 3600000);
+    $("tThere").textContent = two(t.getUTCHours()) + ":" + two(t.getUTCMinutes());
+  }
+  $("off").onchange = () => { off = +$("off").value; store.set("dt2_off", off); tick(); };
+  tick(); setInterval(tick, 15000);
+})();
+
+document.body.insertAdjacentHTML("afterbegin", ART_DEFS + `<div class="pagedeco" aria-hidden="true">${placeDeco(PAGE_DECO)}</div>`);
+document.querySelector("header").insertAdjacentHTML("afterbegin", `<div class="hdeco" aria-hidden="true">${placeDeco(HEADER_DECO)}</div>`);
+$("hdrH").innerHTML = HUSKY; $("hdrC").innerHTML = CAT;
+$("jumpN").max = Q.length;
+$("draw").onclick = draw;
+$("fav").onclick = () => {
+  if(cur === null) return;
+  favs = favs.includes(cur) ? favs.filter(x => x !== cur) : favs.concat([cur]);
+  store.set("dt2_favs", favs); renderFavs(); updateFavBtn();
+};
+$("jump").onsubmit = e => {
+  e.preventDefault();
+  const n = parseInt($("jumpN").value, 10);
+  if(!(n >= 1 && n <= Q.length)){ $("left").textContent = `พิมพ์เลขการ์ด 1 ถึง ${Q.length}`; return; }
+  if(Q[n - 1][0] === "dark" && !adultOk){ deck = "dark"; renderDecks(); draw(); return; }
+  show(n - 1); $("left").textContent = `เปิดการ์ด #${n} ตามเลขที่พิมพ์`;
+};
+document.querySelectorAll("#lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("dt2_lang", lang); renderSegs(); });
+document.querySelectorAll("#depth button").forEach(b => b.onclick = () => { depth = b.dataset.d; store.set("dt2_depth", depth); draw(); });
+if(!Array.isArray(favs)) favs = [];
+if(!["auto","1","2","3"].includes(depth)) depth = "auto";
+if(!["th","en","ja"].includes(lang)) lang = "th";
+renderDecks(); renderMine(); renderFavs();
+if(Q.length) draw(); else message(`<p><b>ไม่พบไฟล์คำถาม</b></p><p>ต้องมีไฟล์ questions.js อยู่ในโฟลเดอร์เดียวกับ index.html</p>`);
+</script>
+</body>
+</html>
