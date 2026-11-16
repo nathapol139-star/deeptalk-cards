@@ -136,33 +136,33 @@ h2{font-size:.9rem;margin:14px 0 0}
       <svg class="path" viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true"><path d="M4 34 Q100 -14 196 34" fill="none" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
       <span class="pet" id="hdrC"></span>
     </div>
-    <h1>คุยลึก ๆ ข้ามระยะทาง</h1>
-    <p>Deep Talk Cards for long-distance couples · 遠距離ディープトーク</p>
+    <h1 data-i18n="title"></h1>
+    <p data-i18n="subtitle"></p>
   </header>
 
-  <div class="clock" aria-label="เวลาของสองฝั่ง">
-    <span>ที่นี่ <b id="tHere">--:--</b></span>
+  <div class="clock" data-i18n-aria="clockAria">
+    <span><span data-i18n="here"></span> <b id="tHere">--:--</b></span>
     <span aria-hidden="true">·</span>
-    <span>ที่โน่น <b id="tThere">--:--</b></span>
-    <select id="off" aria-label="เขตเวลาของอีกฝั่ง"></select>
+    <span><span data-i18n="there"></span> <b id="tThere">--:--</b></span>
+    <select id="off" data-i18n-aria="tzAria"></select>
   </div>
 
   <div class="two">
     <div>
-      <p class="seg-label">ภาษาหลักบนการ์ด</p>
+      <p class="seg-label" data-i18n="langLabel"></p>
       <div class="seg" id="lang">
-        <button type="button" data-l="th">ไทย</button>
-        <button type="button" data-l="en">English</button>
-        <button type="button" data-l="ja">日本語</button>
+        <button type="button" data-l="th" lang="th">ไทย</button>
+        <button type="button" data-l="en" lang="en">English</button>
+        <button type="button" data-l="ja" lang="ja">日本語</button>
       </div>
     </div>
     <div>
-      <p class="seg-label">ความลึกของคำถาม</p>
+      <p class="seg-label" data-i18n="depthLabel"></p>
       <div class="seg" id="depth">
-        <button type="button" data-d="auto">เบาไปลึก</button>
-        <button type="button" data-d="1">1 เบา ๆ</button>
-        <button type="button" data-d="2">2 กลาง</button>
-        <button type="button" data-d="3">3 ลึก</button>
+        <button type="button" data-d="auto" data-i18n="dAuto"></button>
+        <button type="button" data-d="1" data-i18n="d1"></button>
+        <button type="button" data-d="2" data-i18n="d2"></button>
+        <button type="button" data-d="3" data-i18n="d3"></button>
       </div>
     </div>
   </div>
@@ -172,79 +172,70 @@ h2{font-size:.9rem;margin:14px 0 0}
   <section class="card" id="card" aria-live="polite"></section>
 
   <div class="row2">
-    <button type="button" class="btn ghost" id="fav">เก็บใบนี้</button>
-    <button type="button" class="btn" id="draw">จั่วการ์ดใบต่อไป</button>
+    <button type="button" class="btn ghost" id="fav"></button>
+    <button type="button" class="btn" id="draw" data-i18n="draw"></button>
   </div>
   <p class="left" id="left"></p>
   <form class="jump" id="jump" novalidate>
-    <label for="jumpN">คอลกันอยู่? บอกเลขการ์ดให้แฟน แล้วพิมพ์เลขเดียวกัน</label>
-    <input id="jumpN" type="number" inputmode="numeric" min="1" placeholder="เลข">
-    <button type="submit" class="btn small ghost">เปิดใบนี้</button>
+    <label for="jumpN" data-i18n="jumpLabel"></label>
+    <input id="jumpN" type="number" inputmode="numeric" min="1" data-i18n-ph="jumpPh">
+    <button type="submit" class="btn small ghost" data-i18n="jumpBtn"></button>
   </form>
 
   <details id="favBox">
-    <summary>การ์ดที่เก็บไว้ (<span id="favN">0</span>)</summary>
+    <summary><span data-i18n="favTitle"></span> (<span id="favN">0</span>)</summary>
     <div id="favList"></div>
   </details>
 
   <details id="mineBox">
-    <summary>เขียนการ์ดเอง (<span id="mineN">0</span>)</summary>
+    <summary><span data-i18n="mineTitle"></span> (<span id="mineN">0</span>)</summary>
     <form class="form" id="mineForm">
       <div class="pair">
-        <label>หมวด<select id="mCat"></select></label>
-        <label>ความลึก<select id="mLv"><option value="1">1 เบา ๆ</option><option value="2">2 กลาง</option><option value="3">3 ลึก</option></select></label>
+        <label><span data-i18n="mCat"></span><select id="mCat"></select></label>
+        <label><span data-i18n="mLv"></span><select id="mLv"></select></label>
       </div>
-      <label>คำถามภาษาไทย<input id="mTh" maxlength="200" autocomplete="off"></label>
-      <label>English (ไม่ใส่ก็ได้)<input id="mEn" maxlength="200" autocomplete="off"></label>
-      <label>日本語 (ไม่ใส่ก็ได้) ใส่คำอ่านแบบ {漢字|かんじ}<input id="mJa" maxlength="300" autocomplete="off"></label>
-      <button type="submit" class="btn small">เพิ่มการ์ดใบนี้</button>
-      <p class="note" id="mineMsg">ใส่อย่างน้อย 1 ภาษา การ์ดจะไปอยู่ในกองของหมวดที่เลือก</p>
+      <label><span data-i18n="mTh"></span><input id="mTh" maxlength="200" autocomplete="off" lang="th"></label>
+      <label><span data-i18n="mEn"></span><input id="mEn" maxlength="200" autocomplete="off" lang="en"></label>
+      <label><span data-i18n="mJa"></span><input id="mJa" maxlength="300" autocomplete="off" lang="ja"></label>
+      <button type="submit" class="btn small" data-i18n="mAdd"></button>
+      <p class="note" id="mineMsg"></p>
     </form>
     <div id="mineList"></div>
-    <h2>ส่งการ์ดที่เขียนให้แฟน</h2>
+    <h2 data-i18n="sendTitle"></h2>
     <div class="form">
-      <textarea id="code" readonly aria-label="โค้ดการ์ดของฉัน"></textarea>
-      <button type="button" class="btn small ghost" id="copy">คัดลอกโค้ด</button>
+      <textarea id="code" readonly data-i18n-aria="codeAria"></textarea>
+      <button type="button" class="btn small ghost" id="copy"></button>
     </div>
-    <h2>รับการ์ดจากแฟน</h2>
+    <h2 data-i18n="recvTitle"></h2>
     <form class="form" id="impForm">
-      <textarea id="imp" aria-label="วางโค้ดจากแฟน" placeholder="วางโค้ดที่แฟนส่งมาตรงนี้"></textarea>
-      <button type="submit" class="btn small ghost">เพิ่มการ์ดจากโค้ด</button>
+      <textarea id="imp" data-i18n-aria="impAria" data-i18n-ph="impPh"></textarea>
+      <button type="submit" class="btn small ghost" data-i18n="impBtn"></button>
       <p class="note" id="impMsg"></p>
     </form>
   </details>
 
   <details>
-    <summary>วิธีเล่นตอนอยู่ไกลกัน</summary>
-    <ul>
-      <li>เปิดเกมนี้ทั้งสองเครื่องระหว่างคอล หรือให้คนหนึ่งแชร์หน้าจอ</li>
-      <li>คนจั่วบอกเลขมุมขวาบนของการ์ด อีกคนพิมพ์เลขเดียวกันในช่อง "เปิดใบนี้"</li>
-      <li>ตอบทีละคน คนฟังยังไม่ต้องแก้ตัวหรืออธิบาย ฟังให้จบก่อน</li>
-      <li>โหมด "เบาไปลึก" จะเริ่มจากระดับ 1 แล้วค่อยไประดับ 3 ในแต่ละกอง</li>
-      <li>ข้ามได้เสมอ ไม่ต้องให้เหตุผล</li>
-      <li>หมวดชวนทะเลาะ: ใครขึ้นเสียงก่อน ต้องสั่งขนมไปส่งให้อีกฝ่าย</li>
-      <li>เน็ตหลุดก็เล่นต่อได้ เกมนี้ไม่ใช้อินเทอร์เน็ต</li>
-    </ul>
+    <summary data-i18n="howTitle"></summary>
+    <ul id="howList"></ul>
   </details>
 </div>
 
 <script src="art.js"></script>
 <script src="questions.js"></script>
+<script src="i18n.js"></script>
 <script>
-
 const CATS = [
-  {id:"view",  th:"มุมมอง & ทัศนคติ", en:"Views & Values", t:{bg:"#e3ecfc",card:"#ffffff",ink:"#1f2a52",accent:"#3d5bd9",on:"#ffffff",soft:"#cfdcfa"}},
-  {id:"rate",  th:"ให้คะแนน 1–10", en:"Rate it", t:{bg:"#fff0c2",card:"#fffdf5",ink:"#4a3200",accent:"#f0a000",on:"#3a2600",soft:"#ffe08a"}},
-  {id:"tears", th:"เรียกน้ำตา", en:"Tearjerker", dark:true, t:{bg:"#1b2440",card:"#2a3759",ink:"#e8eeff",accent:"#8fb4ff",on:"#10203f",soft:"#3a4b75"}},
-  {id:"fight", th:"ชวนทะเลาะ", en:"Fight Starter", t:{bg:"#ffdfd9",card:"#fff8f6",ink:"#5a1410",accent:"#e23b2e",on:"#ffffff",soft:"#ffc2b8"}},
-  {id:"decode",th:"ถอดรหัสใจ", en:"Decode Me", t:{bg:"#eddffb",card:"#fffaff",ink:"#3a1d5c",accent:"#8a45d6",on:"#ffffff",soft:"#dcc4f6"}},
-  {id:"memory",th:"ความทรงจำของเรา", en:"Our Story", t:{bg:"#fde6d6",card:"#fffaf5",ink:"#5b3220",accent:"#d9703a",on:"#ffffff",soft:"#f9d0b5"}},
-  {id:"future",th:"อนาคต", en:"Future", t:{bg:"#d6f2ec",card:"#f8fffd",ink:"#0f3f3a",accent:"#14917f",on:"#ffffff",soft:"#b4e5db"}},
-  {id:"silly", th:"บ้า ๆ บอ ๆ", en:"What If", t:{bg:"#e3f6c2",card:"#fcfff2",ink:"#2e4208",accent:"#6b9a0c",on:"#ffffff",soft:"#cdea96"}},
-  {id:"dark",  th:"After Dark 18+", en:"After Dark", dark:true, t:{bg:"#24112a",card:"#3a1c42",ink:"#ffe9f6",accent:"#ff6fb1",on:"#3a0a22",soft:"#562c61"}}
+  {id:"view",   t:{bg:"#e3ecfc",card:"#ffffff",ink:"#1f2a52",accent:"#3d5bd9",on:"#ffffff",soft:"#cfdcfa"}},
+  {id:"rate",   t:{bg:"#fff0c2",card:"#fffdf5",ink:"#4a3200",accent:"#f0a000",on:"#3a2600",soft:"#ffe08a"}},
+  {id:"tears",  t:{bg:"#1b2440",card:"#2a3759",ink:"#e8eeff",accent:"#8fb4ff",on:"#10203f",soft:"#3a4b75"}},
+  {id:"fight",  t:{bg:"#ffdfd9",card:"#fff8f6",ink:"#5a1410",accent:"#e23b2e",on:"#ffffff",soft:"#ffc2b8"}},
+  {id:"decode", t:{bg:"#eddffb",card:"#fffaff",ink:"#3a1d5c",accent:"#8a45d6",on:"#ffffff",soft:"#dcc4f6"}},
+  {id:"memory", t:{bg:"#fde6d6",card:"#fffaf5",ink:"#5b3220",accent:"#d9703a",on:"#ffffff",soft:"#f9d0b5"}},
+  {id:"future", t:{bg:"#d6f2ec",card:"#f8fffd",ink:"#0f3f3a",accent:"#14917f",on:"#ffffff",soft:"#b4e5db"}},
+  {id:"silly",  t:{bg:"#e3f6c2",card:"#fcfff2",ink:"#2e4208",accent:"#6b9a0c",on:"#ffffff",soft:"#cdea96"}},
+  {id:"dark",   t:{bg:"#24112a",card:"#3a1c42",ink:"#ffe9f6",accent:"#ff6fb1",on:"#3a0a22",soft:"#562c61"}}
 ];
 const ALL_ACCENT = "#d9478f";
-const LV_NAME = {1:"เบา ๆ", 2:"กลาง", 3:"ลึก"};
 const Q = Array.isArray(window.DT_Q) ? window.DT_Q : [];
 
 const $ = id => document.getElementById(id);
@@ -255,6 +246,23 @@ const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
+
+let lang = store.get("dt2_lang", "th");
+if(!["th","en","ja"].includes(lang)) lang = "th";
+
+/* Interface text. t() returns raw text (Japanese may hold {kanji|reading});
+   h() returns safe HTML with furigana; p() returns plain text for attributes. */
+function t(key, ...args){
+  const d = I18N[lang] || I18N.th;
+  let s = key in d ? d[key] : (I18N.th[key] ?? key);
+  args.forEach((a, i) => { s = s.split("$" + (i + 1)).join(String(a)); });
+  return s;
+}
+const SYN = "{漢字|かんじ}";
+const h = (key, ...a) => ruby(t(key, ...a)).split("%SYN%").join(esc(SYN));
+const p = (key, ...a) => plainJa(t(key, ...a)).split("%SYN%").join(SYN);
+const catName = id => t("cat_" + id);
+
 const validCat = c => CATS.some(x => x.id === c);
 function cleanMine(list){
   if(!Array.isArray(list)) return [];
@@ -262,13 +270,19 @@ function cleanMine(list){
     && ["th","en","ja"].every(k => typeof m[k] === "string" && m[k].length <= 300) && (m.th || m.en || m.ja)).slice(0, 300);
 }
 
-let lang = store.get("dt2_lang", "th");
 let depth = store.get("dt2_depth", "auto");
+if(!["auto","1","2","3"].includes(depth)) depth = "auto";
 let deck = "all";
 let adultOk = false;
 let cur = null;
+let screen = null;          /* what the card area shows when it is not a card: "gate" | "empty" | "missing" */
+let leftMsg = ["", []];     /* key + args of the line under the buttons, so it can be re-translated */
+let mineMsg = ["mHint", []];
+let impMsg = ["", []];
+let copyState = "copy";
 let mine = cleanMine(store.get("dt2_mine", []));
 let favs = store.get("dt2_favs", []);
+if(!Array.isArray(favs)) favs = [];
 let piles = {};
 
 /* A card id is a number (index into Q) or a string (a card you wrote). */
@@ -292,112 +306,137 @@ function pile(d){
   }
   return piles[key];
 }
-function theme(t){ const r = document.documentElement.style; for(const k in t) r.setProperty("--" + k, t[k]); r.setProperty("color-scheme", t.bg[1] < "4" ? "dark" : "light"); }
+function theme(th){ const r = document.documentElement.style; for(const k in th) r.setProperty("--" + k, th[k]); r.setProperty("color-scheme", th.bg[1] < "4" ? "dark" : "light"); }
 function catOf(id){ return CATS.find(c => c.id === id); }
+
+/* ---------- whole-page language ---------- */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.title = p("pageTitle");
+  document.querySelectorAll("[data-i18n]").forEach(el => el.innerHTML = h(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", p(el.dataset.i18nAria)));
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => el.setAttribute("placeholder", p(el.dataset.i18nPh)));
+  $("howList").innerHTML = t("howItems").split("\n").map(s => `<li>${ruby(s)}</li>`).join("");
+  $("mCat").innerHTML = CATS.map(c => `<option value="${c.id}">${esc(plainJa(catName(c.id)))}</option>`).join("");
+  const lvSel = $("mLv").value || "1";
+  $("mLv").innerHTML = [1,2,3].map(n => `<option value="${n}">${esc(p("d" + n))}</option>`).join("");
+  $("mLv").value = lvSel;
+  renderDecks(); renderSegs(); renderFavs(); renderMine();
+  $("mineMsg").innerHTML = mineMsg[0] ? h(mineMsg[0], ...mineMsg[1]) : "";
+  $("impMsg").innerHTML = impMsg[0] ? h(impMsg[0], ...impMsg[1]) : "";
+  $("left").innerHTML = leftMsg[0] ? h(leftMsg[0], ...leftMsg[1]) : "";
+  if(cur !== null) show(cur, true); else if(screen) renderScreen(screen);
+  updateFavBtn();
+}
+function setLeft(key, ...a){ leftMsg = [key, a]; $("left").innerHTML = key ? h(key, ...a) : ""; }
 
 function renderDecks(){
   const el = $("decks"); el.innerHTML = "";
-  const mk = (id, th, en, color, cls) => {
+  const mk = (id, name, sub, color, cls) => {
     const b = document.createElement("button"); b.type = "button"; b.className = "deck" + (cls ? " " + cls : "");
     b.setAttribute("aria-pressed", String(deck === id));
-    b.innerHTML = `<i style="background:${color}"></i><span><b>${esc(th)}</b><small>${esc(en)}</small></span>`;
+    b.innerHTML = `<i style="background:${color}"></i><span><b>${ruby(name)}</b></span>`;
     b.onclick = () => { deck = id; renderDecks(); draw(); };
     el.appendChild(b);
   };
-  mk("all", "สุ่มทุกหมวด", "Shuffle every deck", ALL_ACCENT, "all");
-  CATS.forEach(c => mk(c.id, c.th, c.en, c.t.accent));
+  mk("all", t("cat_all"), "", ALL_ACCENT, "all");
+  CATS.forEach(c => mk(c.id, catName(c.id), "", c.t.accent));
 }
 function renderSegs(){
   document.querySelectorAll("#lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   document.querySelectorAll("#depth button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.d === depth)));
   const ps = [...document.querySelectorAll(".q p")];
-  const main = ps.find(p => p.dataset.l === lang) || ps[0];
-  ps.forEach(p => p.classList.toggle("main", p === main));
+  const main = ps.find(x => x.dataset.l === lang) || ps[0];
+  ps.forEach(x => x.classList.toggle("main", x === main));
 }
 
-function show(id){
+/* ---------- card ---------- */
+function show(id, keepAnim){
   const it = item(id); if(!it) return false;
-  const card = $("card"); cur = id;
-  const c = catOf(it.c); theme(c.t);
+  const card = $("card"); cur = id; screen = null;
+  theme(catOf(it.c).t);
   const dots = [1,2,3].map(n => `<i class="${n <= it.lv ? "on" : ""}"></i>`).join("");
-  let html = `<div class="top"><span class="tag">${esc(c.th)}</span><span class="lv" title="ความลึกระดับ ${it.lv}">${dots}<span>${LV_NAME[it.lv]}</span></span><span class="num">${it.own ? "การ์ดของเรา" : "#" + String(it.no).padStart(3, "0")}</span></div><div class="q">`;
+  let html = `<div class="top"><span class="tag">${ruby(catName(it.c))}</span><span class="lv" title="${esc(p("lvTitle", it.lv))}">${dots}<span>${h("lv" + it.lv)}</span></span><span class="num">${it.own ? h("ownCard") : "#" + String(it.no).padStart(3, "0")}</span></div><div class="q">`;
   if(it.ja) html += `<p class="ja" data-l="ja" lang="ja"><span class="lab">日本語</span><span class="txt">${ruby(it.ja)}</span></p>`;
   if(it.th) html += `<p class="th" data-l="th" lang="th"><span class="lab">ไทย</span><span class="txt">${esc(it.th)}</span></p>`;
   if(it.en) html += `<p class="en" data-l="en" lang="en"><span class="lab">ENGLISH</span><span class="txt">${esc(it.en)}</span></p>`;
   html += `</div>`;
-  if(it.ja) html += `<button type="button" class="say" id="say">ฟังเสียงภาษาญี่ปุ่น</button><p class="note" id="sayMsg" hidden></p>`;
+  if(it.ja) html += `<button type="button" class="say" id="say">${h("say")}</button><p class="note" id="sayMsg" hidden></p>`;
   if(it.c === "rate"){
-    const nums = w => Array.from({length:10}, (_, i) => `<button type="button" data-w="${w}" aria-pressed="false" aria-label="${w === "h" ? "ฮัสกี้" : "แมว"}ให้ ${i + 1}">${i + 1}</button>`).join("");
+    const nums = w => Array.from({length:10}, (_, i) => `<button type="button" data-w="${w}" aria-pressed="false" aria-label="${esc(p(w === "h" ? "rateH" : "rateC", i + 1))}">${i + 1}</button>`).join("");
     html += `<div class="rate"><div class="row"><span class="pet">${HUSKY}</span><div class="nums">${nums("h")}</div></div><div class="row"><span class="pet">${CAT}</span><div class="nums">${nums("c")}</div></div></div>`;
-  }
-  if(it.c !== "rate") html += CARD_DECO();
+  } else html += CARD_DECO();
+  const picked = keepAnim ? [...card.querySelectorAll('.rate button[aria-pressed="true"]')].map(b => b.dataset.w + b.textContent) : [];
   card.innerHTML = html;
-  card.querySelectorAll(".rate button").forEach(b => b.onclick = () => {
-    card.querySelectorAll(`.rate button[data-w="${b.dataset.w}"]`).forEach(x => x.setAttribute("aria-pressed", "false"));
-    b.setAttribute("aria-pressed", "true");
+  card.querySelectorAll(".rate button").forEach(b => {
+    if(picked.includes(b.dataset.w + b.textContent)) b.setAttribute("aria-pressed", "true");
+    b.onclick = () => {
+      card.querySelectorAll(`.rate button[data-w="${b.dataset.w}"]`).forEach(x => x.setAttribute("aria-pressed", "false"));
+      b.setAttribute("aria-pressed", "true");
+    };
   });
   if(it.ja) $("say").onclick = () => speak(plainJa(it.ja));
-  stopSpeak();
-  card.classList.remove("flip"); void card.offsetWidth; card.classList.add("flip");
+  if(!keepAnim){ stopSpeak(); card.classList.remove("flip"); void card.offsetWidth; card.classList.add("flip"); }
   renderSegs(); updateFavBtn();
   return true;
 }
-
-function message(html){ cur = null; $("card").innerHTML = `<div class="gate">${html}</div>`; updateFavBtn(); stopSpeak(); }
-
-function draw(){
-  if(deck === "dark" && !adultOk){
-    theme(catOf("dark").t);
-    message(`<p><b>After Dark เป็นหมวดสำหรับผู้ใหญ่ 18+</b></p><p>คำถามเรื่องความใกล้ชิดของเราสองคน ทั้งคู่โอเคที่จะเปิดหมวดนี้ไหม</p><div class="row2"><button type="button" class="btn ghost" id="no">ยังก่อน</button><button type="button" class="btn" id="yes">โอเคทั้งคู่ เปิดเลย</button></div>`);
+function renderScreen(kind){
+  screen = kind; cur = null; stopSpeak();
+  let inner = "";
+  if(kind === "gate") inner = `<p><b>${h("gateTitle")}</b></p><p>${h("gateText")}</p><div class="row2"><button type="button" class="btn ghost" id="no">${h("gateNo")}</button><button type="button" class="btn" id="yes">${h("gateYes")}</button></div>`;
+  if(kind === "empty") inner = `<p><b>${h("emptyTitle", depth)}</b></p><p>${h("emptyText")}</p>`;
+  if(kind === "missing") inner = `<p><b>${h("missTitle")}</b></p><p>${h("missText")}</p>`;
+  $("card").innerHTML = `<div class="gate">${inner}</div>`;
+  if(kind === "gate"){
     $("yes").onclick = () => { adultOk = true; piles = {}; draw(); };
     $("no").onclick = () => { deck = "all"; renderDecks(); draw(); };
-    $("left").textContent = ""; return;
   }
+  updateFavBtn();
+}
+
+function draw(){
+  if(deck === "dark" && !adultOk){ theme(catOf("dark").t); renderScreen("gate"); setLeft(""); return; }
   const total = pool(deck).length;
-  if(!total){
-    if(deck !== "all") theme(catOf(deck).t);
-    message(`<p><b>กองนี้ไม่มีการ์ดระดับ ${esc(depth)}</b></p><p>ลองเปลี่ยนความลึกเป็น "เบาไปลึก" หรือเลือกหมวดอื่น</p>`);
-    $("left").textContent = ""; return;
-  }
-  const p = pile(deck);
-  show(p.pop());
-  $("left").textContent = p.length ? `เหลืออีก ${p.length} จาก ${total} ใบในกองนี้` : `ใบสุดท้ายของกองนี้แล้ว จั่วอีกครั้งจะสับกองใหม่ (${total} ใบ)`;
+  if(!total){ if(deck !== "all") theme(catOf(deck).t); renderScreen("empty"); setLeft(""); return; }
+  const pl = pile(deck);
+  show(pl.pop());
+  if(pl.length) setLeft("left", pl.length, total); else setLeft("leftLast", total);
 }
 
 /* Japanese audio: uses the voice installed on this device, so it works offline. */
 function stopSpeak(){ try{ window.speechSynthesis && speechSynthesis.cancel(); }catch(e){} }
 function speak(text){
   const msg = $("sayMsg");
-  const say = t => { if(msg){ msg.hidden = false; msg.textContent = t; } };
-  if(!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined"){ say("เบราว์เซอร์นี้ยังไม่รองรับการอ่านออกเสียง ลองเปิดด้วย Chrome, Edge หรือ Safari"); return; }
+  const say = key => { if(msg){ msg.hidden = false; msg.innerHTML = h(key); } };
+  if(!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined"){ say("sayNoSupport"); return; }
   try{
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "ja-JP"; u.rate = 0.85;
     const v = speechSynthesis.getVoices().find(v => /^ja(-|_|$)/i.test(v.lang));
-    if(v) u.voice = v;
-    else say("ถ้าไม่มีเสียง แปลว่าเครื่องนี้ยังไม่มีเสียงภาษาญี่ปุ่น เพิ่มได้ในการตั้งค่าภาษา/เสียงพูดของเครื่อง");
-    u.onerror = () => say("อ่านออกเสียงไม่สำเร็จ ลองกดอีกครั้ง หรือเช็กเสียงภาษาญี่ปุ่นในการตั้งค่าเครื่อง");
+    if(v) u.voice = v; else say("sayNoVoice");
+    u.onerror = () => say("sayFail");
     speechSynthesis.speak(u);
-  }catch(e){ say("อ่านออกเสียงไม่สำเร็จในเบราว์เซอร์นี้"); }
+  }catch(e){ say("sayFail"); }
 }
 try{ window.speechSynthesis && speechSynthesis.getVoices(); }catch(e){}
 
+/* ---------- saved cards ---------- */
 function updateFavBtn(){
   const b = $("fav"); b.disabled = cur === null;
-  b.textContent = cur !== null && favs.includes(cur) ? "เก็บแล้ว ✓" : "เก็บใบนี้";
+  b.innerHTML = cur !== null && favs.includes(cur) ? h("favDone") : h("favAdd");
 }
-function label(it){ return it.th || it.en || plainJa(it.ja); }
+function label(it){ return lang === "ja" && it.ja ? plainJa(it.ja) : (it[lang] || it.th || it.en || plainJa(it.ja)); }
 function renderFavs(){
   favs = favs.filter(id => item(id));
   $("favN").textContent = favs.length;
   const box = $("favList");
-  if(!favs.length){ box.innerHTML = `<p>ยังไม่มีการ์ดที่เก็บไว้ กด "เก็บใบนี้" ตอนเจอคำถามที่อยากกลับมาคุยอีก</p>`; return; }
-  box.innerHTML = "<ol>" + favs.map((id, k) => { const it = item(id); return `<li>${it.no ? "#" + it.no + " " : ""}${esc(label(it))}<button type="button" class="del" data-k="${k}">เอาออก</button></li>`; }).join("") + "</ol>";
+  if(!favs.length){ box.innerHTML = `<p>${h("favEmpty")}</p>`; return; }
+  box.innerHTML = "<ol>" + favs.map((id, k) => { const it = item(id); return `<li>${it.no ? "#" + it.no + " " : ""}${esc(label(it))}<button type="button" class="del" data-k="${k}">${h("remove")}</button></li>`; }).join("") + "</ol>";
   box.querySelectorAll("button").forEach(b => b.onclick = () => { favs.splice(+b.dataset.k, 1); store.set("dt2_favs", favs); renderFavs(); updateFavBtn(); });
 }
 
-/* Cards you write yourselves, and a text code to send them to your partner. */
+/* ---------- cards you write, and a code to send them ---------- */
 function encode(list){ return "DT1:" + btoa(unescape(encodeURIComponent(JSON.stringify(list)))); }
 function decode(code){ const m = /DT1:([A-Za-z0-9+/=]+)/.exec(code.replace(/\s+/g, "")); if(!m) return null; try{ return cleanMine(JSON.parse(decodeURIComponent(escape(atob(m[1]))))); }catch(e){ return null; } }
 function saveMine(){ store.set("dt2_mine", mine); piles = {}; renderMine(); renderFavs(); }
@@ -405,36 +444,38 @@ function renderMine(){
   $("mineN").textContent = mine.length;
   $("code").value = mine.length ? encode(mine) : "";
   $("copy").disabled = !mine.length;
+  $("copy").innerHTML = h(copyState === "ok" ? "copyOk" : copyState === "fail" ? "copyFail" : "copy");
   const box = $("mineList");
-  box.innerHTML = mine.length ? "<ol>" + mine.map((m, k) => `<li>[${esc(catOf(m.c).th)} · ระดับ ${m.lv}] ${esc(label(m))}<button type="button" class="del" data-k="${k}">ลบ</button></li>`).join("") + "</ol>" : "";
+  box.innerHTML = mine.length ? "<ol>" + mine.map((m, k) => `<li>[${ruby(catName(m.c))} · ${h("lv" + m.lv)}] ${esc(label(m))}<button type="button" class="del" data-k="${k}">${h("del")}</button></li>`).join("") + "</ol>" : "";
   box.querySelectorAll("button").forEach(b => b.onclick = () => { const gone = mine.splice(+b.dataset.k, 1)[0]; if(cur === gone.id) draw(); saveMine(); });
 }
-$("mCat").innerHTML = CATS.map(c => `<option value="${c.id}">${esc(c.th)}</option>`).join("");
+function setMine(key, ...a){ mineMsg = [key, a]; $("mineMsg").innerHTML = h(key, ...a); }
+function setImp(key, ...a){ impMsg = [key, a]; $("impMsg").innerHTML = h(key, ...a); }
 $("mineForm").onsubmit = e => {
   e.preventDefault();
   const m = {id:"c" + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36), c:$("mCat").value, lv:+$("mLv").value,
     th:$("mTh").value.trim(), en:$("mEn").value.trim(), ja:$("mJa").value.trim()};
-  if(!m.th && !m.en && !m.ja){ $("mineMsg").textContent = "ยังไม่ได้พิมพ์คำถาม ใส่อย่างน้อย 1 ภาษา"; return; }
-  mine.push(m); saveMine();
+  if(!m.th && !m.en && !m.ja){ setMine("mEmpty"); return; }
+  mine.push(m); copyState = "copy"; saveMine();
   ["mTh","mEn","mJa"].forEach(i => $(i).value = "");
-  $("mineMsg").textContent = `เพิ่มแล้ว อยู่ในกอง "${catOf(m.c).th}"`;
+  setMine("mAdded", plainJa(catName(m.c)));
   deck = m.c; renderDecks(); if(m.c !== "dark" || adultOk) show(m.id); else draw();
 };
 $("copy").onclick = () => {
-  const done = ok => { $("copy").textContent = ok ? "คัดลอกแล้ว ✓ ส่งให้แฟนทางแชตได้เลย" : "คัดลอกไม่ได้ กดค้างที่โค้ดแล้วเลือกคัดลอก"; };
-  const fallback = () => { const t = $("code"); t.focus(); t.select(); let ok = false; try{ ok = document.execCommand("copy"); }catch(e){} done(ok); };
+  const done = ok => { copyState = ok ? "ok" : "fail"; renderMine(); };
+  const fallback = () => { const tx = $("code"); tx.focus(); tx.select(); let ok = false; try{ ok = document.execCommand("copy"); }catch(e){} done(ok); };
   try{ navigator.clipboard.writeText($("code").value).then(() => done(true), fallback); }catch(e){ fallback(); }
 };
 $("impForm").onsubmit = e => {
   e.preventDefault();
   const list = decode($("imp").value);
-  if(!list){ $("impMsg").textContent = "อ่านโค้ดไม่ได้ ให้แฟนกดคัดลอกโค้ดใหม่ แล้ววางทั้งก้อนที่ขึ้นต้นด้วย DT1:"; return; }
+  if(!list){ setImp("impBad"); return; }
   const fresh = list.filter(m => !mine.some(x => x.id === m.id));
   mine = mine.concat(fresh).slice(0, 300); saveMine(); $("imp").value = "";
-  $("impMsg").textContent = fresh.length ? `เพิ่มการ์ดจากแฟนแล้ว ${fresh.length} ใบ` : "การ์ดในโค้ดนี้มีอยู่ในเครื่องครบแล้ว";
+  if(fresh.length) setImp("impOk", fresh.length); else setImp("impSame");
 };
 
-/* Two clocks: this device, and the partner's time zone. */
+/* ---------- two clocks ---------- */
 (function(){
   const offs = [-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,3.5,4,4.5,5,5.5,6,6.5,7,8,9,9.5,10,11,12,13,14];
   const local = -new Date().getTimezoneOffset() / 60;
@@ -445,13 +486,14 @@ $("impForm").onsubmit = e => {
   function tick(){
     const now = new Date();
     $("tHere").textContent = two(now.getHours()) + ":" + two(now.getMinutes());
-    const t = new Date(now.getTime() + off * 3600000);
-    $("tThere").textContent = two(t.getUTCHours()) + ":" + two(t.getUTCMinutes());
+    const tt = new Date(now.getTime() + off * 3600000);
+    $("tThere").textContent = two(tt.getUTCHours()) + ":" + two(tt.getUTCMinutes());
   }
   $("off").onchange = () => { off = +$("off").value; store.set("dt2_off", off); tick(); };
   tick(); setInterval(tick, 15000);
 })();
 
+/* ---------- start ---------- */
 document.body.insertAdjacentHTML("afterbegin", ART_DEFS + `<div class="pagedeco" aria-hidden="true">${placeDeco(PAGE_DECO)}</div>`);
 document.querySelector("header").insertAdjacentHTML("afterbegin", `<div class="hdeco" aria-hidden="true">${placeDeco(HEADER_DECO)}</div>`);
 $("hdrH").innerHTML = HUSKY; $("hdrC").innerHTML = CAT;
@@ -465,17 +507,13 @@ $("fav").onclick = () => {
 $("jump").onsubmit = e => {
   e.preventDefault();
   const n = parseInt($("jumpN").value, 10);
-  if(!(n >= 1 && n <= Q.length)){ $("left").textContent = `พิมพ์เลขการ์ด 1 ถึง ${Q.length}`; return; }
+  if(!(n >= 1 && n <= Q.length)){ setLeft("jumpBad", Q.length); return; }
   if(Q[n - 1][0] === "dark" && !adultOk){ deck = "dark"; renderDecks(); draw(); return; }
-  show(n - 1); $("left").textContent = `เปิดการ์ด #${n} ตามเลขที่พิมพ์`;
+  show(n - 1); setLeft("jumpOk", n);
 };
-document.querySelectorAll("#lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("dt2_lang", lang); renderSegs(); });
-document.querySelectorAll("#depth button").forEach(b => b.onclick = () => { depth = b.dataset.d; store.set("dt2_depth", depth); draw(); });
-if(!Array.isArray(favs)) favs = [];
-if(!["auto","1","2","3"].includes(depth)) depth = "auto";
-if(!["th","en","ja"].includes(lang)) lang = "th";
-renderDecks(); renderMine(); renderFavs();
-if(Q.length) draw(); else message(`<p><b>ไม่พบไฟล์คำถาม</b></p><p>ต้องมีไฟล์ questions.js อยู่ในโฟลเดอร์เดียวกับ index.html</p>`);
+document.querySelectorAll("#lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("dt2_lang", lang); applyLang(); });
+document.querySelectorAll("#depth button").forEach(b => b.onclick = () => { depth = b.dataset.d; store.set("dt2_depth", depth); renderSegs(); draw(); });
+if(Q.length){ applyLang(); draw(); } else { applyLang(); renderScreen("missing"); }
 </script>
 </body>
 </html>

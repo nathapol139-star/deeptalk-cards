@@ -18,6 +18,7 @@ Deep-talk question cards for long-distance couples, playable in any browser.
 | --- | --- |
 | `index.html` | ตัวเกม |
 | `questions.js` | คำถามทั้งหมด หนึ่งบรรทัดต่อหนึ่งใบ เพิ่มใบใหม่ต่อท้ายเท่านั้น เลขการ์ดจะได้ไม่เลื่อน |
+| `i18n.js` | ข้อความหน้าเว็บทั้ง 3 ภาษา (ไทย / English / 日本語) |
 | `art.js` | ภาพสีน้ำของฮัสกี้ แมว และของตกแต่ง (วาดด้วย SVG ไม่มีไฟล์รูป) |
 | `fonts/` | ฟอนต์ Mali (SIL Open Font License) |
 
